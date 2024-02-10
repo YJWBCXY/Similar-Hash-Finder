@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <bitset>
+#include <sstream>
 
 
 std::vector<std::string> sha256_str_to_bin(std::string& input) {
@@ -58,7 +59,7 @@ std::bitset<32> bit_adder(const std::bitset<32>& a, const std::bitset<32>& b) {
 	return result;
 }
 
-std::vector<std::bitset<32>> sha256( std::string message) {
+std::string sha256(std::string message) {
 
 	std::vector<std::string> out;
 
@@ -117,22 +118,23 @@ std::vector<std::bitset<32>> sha256( std::string message) {
 		std::bitset<32>(528734635),
 		std::bitset<32>(1541459225)
 	};
-	//working variables
-	std::bitset<32>
-		a = hash[0],
-		b = hash[1],
-		c = hash[2],
-		d = hash[3],
-		e = hash[4],
-		f = hash[5],
-		g = hash[6],
-		h = hash[7];
 	while (i < lenght) {
+		//working variables
+		std::bitset<32>
+			a = hash[0],
+			b = hash[1],
+			c = hash[2],
+			d = hash[3],
+			e = hash[4],
+			f = hash[5],
+			g = hash[6],
+			h = hash[7];
 		std::vector <std::bitset<32>> w(64);
 		int w0 = 0, w1 = 1, w9 = 9, w14 = 14, w16 = 16;
 		for (int j = 0;j < 16;j++, i++) {
 			w[j] = bin_out[i];
 		}
+
 		std::bitset<32> sigma0, sigma1;
 		while (w16 < 64) {
 			sigma0 = bit_rotate_right(w[w1], 7) ^ bit_rotate_right(w[w1], 18) ^ (w[w1] >> 3);
@@ -140,8 +142,46 @@ std::vector<std::bitset<32>> sha256( std::string message) {
 			w[w16] = bit_adder(bit_adder(bit_adder(w[w0], sigma0), w[w9]), sigma1);
 			w0++;w1++;w9++;w14++;w16++;
 		}
-		std::bitset<32> tmp1, tmp2, majority;
+
+		std::bitset<32> tmp1, tmp2, choice, majority;
+		for (int j = 0;j < 64;j++) {
+			sigma0 = bit_rotate_right(a, 2) ^ bit_rotate_right(a, 13) ^ bit_rotate_right(a, 22);
+			sigma1 = bit_rotate_right(e, 6) ^ bit_rotate_right(e, 11) ^ bit_rotate_right(e, 25);
+			choice = (e & f) ^ ((~e) & g);
+			majority = (a & b) ^ (a & c) ^ (b & c);
+			tmp1 = bit_adder(bit_adder(bit_adder(bit_adder(h, sigma1), choice), k[j]), w[j]);
+			tmp2 = bit_adder(sigma0, majority);
+			h = g;
+			g = f;
+			f = e;
+			e = bit_adder(d, tmp1);
+			d = c;
+			c = b;
+			b = a;
+			a = bit_adder(tmp1, tmp2);
+		}
+		hash[0] = bit_adder(a, hash[0]);
+		hash[1] = bit_adder(b, hash[1]);
+		hash[2] = bit_adder(c, hash[2]);
+		hash[3] = bit_adder(d, hash[3]);
+		hash[4] = bit_adder(e, hash[4]);
+		hash[5] = bit_adder(f, hash[5]);
+		hash[6] = bit_adder(g, hash[6]);
+		hash[7] = bit_adder(h, hash[7]);
+	}
+	std::string hash_out;
+	for (std::bitset<32> _bitset : hash) {
+		std::stringstream hash_tmp;
+		std::string tmp_str;
+		hash_tmp << std::hex << _bitset.to_ullong();
+		hash_tmp>>tmp_str;
+		int lenght = tmp_str.size();
+		while (lenght < 8) {
+			tmp_str = '0' + tmp_str;
+			lenght = tmp_str.size();
+		}
+		hash_out += tmp_str;
 	}
 
-	return k;
+	return hash_out;
 }

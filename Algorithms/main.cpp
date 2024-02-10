@@ -7,15 +7,9 @@
 
 int main()
 {
-	std::vector<std::bitset<32>> out = sha256("test");
-	int i = 0;
+	std::string hash = sha256("`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?");
 
-	for (std::bitset<32> _bitset : out) {
-		std::cout << _bitset;
-		std::cout << "\n";
-		i++;
-	}
-	std::cout << i;
+	std::cout << hash;
 
 	return 0;
 }
