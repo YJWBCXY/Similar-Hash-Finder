@@ -60,4 +60,50 @@ namespace Algorithms {
 			ASSERT_EQ(result[i], test[i]);
 		}
 	}
+
+	TEST(Tools, BitRotateRight) {
+		std::vector<std::bitset<32>> input = {
+			std::bitset<32>(1426881987),
+			std::bitset<32>(3144134277),
+			std::bitset<32>(3600352804),
+			std::bitset<32>(607225278)
+		};
+		std::vector<std::vector<std::bitset<32>>> test{
+			{ std::bitset<32>(1788972984), std::bitset<32>(2109953292), std::bitset<32>(1893024543), std::bitset<32>(838274388) },
+			{ std::bitset<32>(3077371344), std::bitset<32>(2927999847), std::bitset<32>(2708396523), std::bitset<32>(2662995693) },
+			{ std::bitset<32>(2597527748), std::bitset<32>(103077529), std::bitset<32>(2301994561), std::bitset<32>(1679332186) },
+			{ std::bitset<32>(3297128631), std::bitset<32>(2243830833), std::bitset<32>(1871252577), std::bitset<32>(3323394192) }
+		}, result(4);
+		std::vector<int> shift = { 3,16,10,22 };
+
+		int lenght = input.size();
+		for (int i = 0;i < lenght;i++) {
+			for (int j = 0;j < lenght;j++) {
+				result[i].push_back(bit_rotate_right(input[i], shift[j]));
+				ASSERT_EQ(result[i][j], test[i][j]) << "i:" << i << " j:" << j;
+			}
+		}
+	}
+	TEST(Tools, BitAdder) {
+		std::vector<std::bitset<32>> input = {
+			std::bitset<32>(2428436474),
+			std::bitset<32>(3336571891),
+			std::bitset<32>(1996064986),
+			std::bitset<32>(3584528711)
+		};
+		std::vector<std::vector<std::bitset<32>>> test{
+			{ std::bitset<32>(561905652), std::bitset<32>(1470041069), std::bitset<32>(129534164), std::bitset<32>(1717997889) },
+			{ std::bitset<32>(1470041069), std::bitset<32>(2378176486), std::bitset<32>(1037669581), std::bitset<32>(2626133306) },
+			{ std::bitset<32>(129534164), std::bitset<32>(1037669581), std::bitset<32>(3992129972), std::bitset<32>(1285626401) },
+			{ std::bitset<32>(1717997889), std::bitset<32>(2626133306), std::bitset<32>(1285626401), std::bitset<32>(2874090126) },
+		}, result(4);
+
+		int lenght = input.size();
+		for (int i = 0;i < lenght;i++) {
+			for (int j = 0;j < lenght;j++) {
+				result[i].push_back(bit_adder(input[i], input[j]));
+				ASSERT_EQ(result[i][j], test[i][j]) << "i:" << i << " j:" << j;
+			}
+		}
+	}
 }
