@@ -3,6 +3,7 @@
 #include <vector>
 #include <bitset>
 #include <sstream>
+#include "base.hpp"
 
 
 std::vector<std::string> sha256_str_to_bin(std::string& input) {
@@ -59,7 +60,7 @@ std::bitset<32> bit_adder(const std::bitset<32>& a, const std::bitset<32>& b) {
 	return result;
 }
 
-std::string sha256(std::string message) {
+std::vector<std::bitset<32>> sha256(std::string message) {
 
 	std::vector<std::string> out;
 
@@ -169,12 +170,36 @@ std::string sha256(std::string message) {
 		hash[6] = bit_adder(g, hash[6]);
 		hash[7] = bit_adder(h, hash[7]);
 	}
+
+	return hash;
+}
+
+std::string sha256_to_bin(std::string message) {
+
+	std::vector < std::bitset<32>> hash;
+
+	hash = sha256(message);
+	
+	std::string hash_out;
+	for (std::bitset<32> _bitset : hash) {
+		hash_out += _bitset.to_string();
+	}
+
+	return hash_out;
+}
+
+std::string sha256_to_hex(std::string message) {
+
+	std::vector < std::bitset<32>> hash;
+
+	hash = sha256(message);
+
 	std::string hash_out;
 	for (std::bitset<32> _bitset : hash) {
 		std::stringstream hash_tmp;
 		std::string tmp_str;
 		hash_tmp << std::hex << _bitset.to_ullong();
-		hash_tmp>>tmp_str;
+		hash_tmp >> tmp_str;
 		int lenght = tmp_str.size();
 		while (lenght < 8) {
 			tmp_str = '0' + tmp_str;
@@ -184,4 +209,15 @@ std::string sha256(std::string message) {
 	}
 
 	return hash_out;
+}
+
+std::string sha256_to_base91(std::string message) {
+	std::string bin_hash = sha256_to_bin(message),
+		out_hash = "";
+	for (int i = 0;i < 256;i += 8) {
+		out_hash += std::bitset<8>(bin_hash.substr(i, 8)).to_ulong();
+	}
+	out_hash = base91::encode(out_hash);
+
+	return out_hash;
 }

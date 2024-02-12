@@ -5,7 +5,7 @@
 namespace Algorithms {
 	TEST(sha256, EmptyString) {
 		std::string hash;
-		hash = sha256("");
+		hash = sha256_to_hex("");
 		ASSERT_EQ(hash, "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
 	}
 	TEST(sha256, OneChunkMessageBlock) {
@@ -30,7 +30,7 @@ namespace Algorithms {
 		}, result;
 		int lenght = input.size();
 		for (int i = 0;i < lenght;i++) {
-			result.push_back(sha256(input[i]));
+			result.push_back(sha256_to_hex(input[i]));
 			ASSERT_EQ(result[i], test[i]);
 		}
 	}
@@ -56,7 +56,7 @@ namespace Algorithms {
 		}, result;
 		int lenght = input.size();
 		for (int i = 0;i < lenght;i++) {
-			result.push_back(sha256(input[i]));
+			result.push_back(sha256_to_hex(input[i]));
 			ASSERT_EQ(result[i], test[i]);
 		}
 	}
