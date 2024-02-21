@@ -1,3 +1,9 @@
 {
-    "cmake.sourceDirectory": "${workspaceFolder}/Algorithms"
+    "cmake.sourceDirectory": [
+        "${workspaceFolder}/Algorithms",
+        "${workspaceFolder}/Sample-Test"
+    ],
+    "cmake.configureSettings": {
+        "CMAKE_INSTALL_PREFIX":"${workspaceFolder}/build"
+    }
 }
