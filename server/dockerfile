@@ -1,0 +1,9 @@
+FROM mongodb/mongo-cxx-driver:3.9.0-redhat-ubi-9.3 AS base
+
+
+FROM base AS builder
+
+RUN mkdir -p /usr/src
+COPY ./ /usr/src/
+
+FROM base AS runtime
