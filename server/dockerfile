@@ -1,9 +1,22 @@
-FROM mongodb/mongo-cxx-driver:3.9.0-redhat-ubi-9.3 AS base
+FROM debian:stable-20240211-slim AS base
 
 
 FROM base AS builder
 
+RUN apt update
+RUN apt install -y g++ 
+RUN apt install -y cmake
+
 RUN mkdir -p /usr/src
 COPY ./ /usr/src/
 
+RUN cmake -S /usr/src/ -B /usr/src/build
+RUN cmake --build /usr/src/build
+RUN cmake --install /usr/src/build --prefix "/usr/src/install"
+
+
 FROM base AS runtime
+
+COPY --from=builder /usr/src/install /usr/src
+
+ENTRYPOINT [ "/usr/src/bin/SHF_server" ]
