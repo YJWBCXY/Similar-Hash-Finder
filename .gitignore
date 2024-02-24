@@ -427,3 +427,6 @@ _deps
 
 # Build Folder
 build
+
+# VSCode workspace
+*.code-workspace
