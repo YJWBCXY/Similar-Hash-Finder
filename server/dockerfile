@@ -1,22 +1,55 @@
 FROM debian:stable-20240211-slim AS base
 
+RUN apt update
+
 
 FROM base AS builder
 
-RUN apt update
-RUN apt install -y g++ 
+RUN apt install -y g++
 RUN apt install -y cmake
+RUN apt install -y git
+RUN apt install -y openssh-server
+RUN apt install -y pkg-config
+RUN apt install -y libssl-dev
+RUN apt install -y libsasl2-dev
+RUN apt install -y python3
 
 RUN mkdir -p /usr/src
-COPY ./ /usr/src/
 
-RUN cmake -S /usr/src/ -B /usr/src/build
-RUN cmake --build /usr/src/build
-RUN cmake --install /usr/src/build --prefix "/usr/src/install"
+WORKDIR /usr/src
+
+# Building mongo-c-driver
+RUN git clone https://github.com/mongodb/mongo-c-driver.git
+WORKDIR /usr/src/mongo-c-driver
+RUN git checkout 1.26.0
+WORKDIR /usr/src/mongo-c-driver/build
+RUN cmake -D ENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF ..
+RUN cmake --build .
+RUN cmake --install . --prefix "/usr/src/mongo-c-driver/install"
+
+WORKDIR /usr/src
+
+# Building mongo-cxx-driver
+RUN git clone https://github.com/mongodb/mongo-cxx-driver.git
+WORKDIR /usr/src/mongo-cxx-driver
+RUN git checkout r3.9.0
+WORKDIR /usr/src/mongo-cxx-driver/build
+RUN cmake -DCMAKE_PREFIX_PATH=/usr/src/mongo-c-driver/install -DCMAKE_INSTALL_PREFIX=/usr/src/mongo-cxx-driver/install ..
+RUN cmake --build .
+RUN cmake --install . 
+
+WORKDIR /usr/src
+
+COPY ./ /usr/src/server
+
+RUN cmake -S /usr/src/server -B /usr/src/server/build
+RUN cmake --build /usr/src/server/build
+RUN cmake --install /usr/src/server/build --prefix "/usr/src/server/install"
 
 
 FROM base AS runtime
 
-COPY --from=builder /usr/src/install /usr/src
+COPY --from=builder /usr/src/mongo-c-driver/install /usr/local/
+COPY --from=builder /usr/src/server/install /usr/src
 
 ENTRYPOINT [ "/usr/src/bin/SHF_server" ]
