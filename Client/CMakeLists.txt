@@ -9,7 +9,7 @@ target_include_directories(shf_client INTERFACE
                            )
 target_compile_definitions(shf_client PUBLIC compiler_flags)
 
-
+target_link_libraries(shf_client PUBLIC Algorithms)
 target_link_libraries(shf_client PRIVATE Qt6::Widgets)
 
 set_target_properties(shf_client PROPERTIES
