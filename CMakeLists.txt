@@ -7,4 +7,5 @@ target_compile_features(compiler_flags INTERFACE cxx_std_17)
 
 add_subdirectory(Algorithms)
 add_subdirectory(Client)
+add_subdirectory(tests)
 
