@@ -30,4 +30,8 @@ if(WIN32)
             $<TARGET_FILE:Qt6::Gui>
             $<TARGET_FILE_DIR:shf_client>
     )
+elseif(APPLE)
+    set_target_properties(shf_client PROPERTIES
+        MACOSX_BUNDLE TRUE
+    )
 endif()
