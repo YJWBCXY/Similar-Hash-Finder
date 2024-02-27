@@ -50,7 +50,7 @@ RUN cmake --install /usr/src/server/build --prefix "/usr/src/server/install"
 
 FROM base AS runtime
 
-COPY --from=builder /usr/src/mongo-c-driver/install /usr/local/
+COPY --from=builder /usr/src/mongo-cxx-driver/install /usr/local/
 COPY --from=builder /usr/src/server/install /usr/src
 
 ENTRYPOINT [ "/usr/src/bin/SHF_server" ]
