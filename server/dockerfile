@@ -13,6 +13,7 @@ RUN apt install -y pkg-config
 RUN apt install -y libssl-dev
 RUN apt install -y libsasl2-dev
 RUN apt install -y python3
+RUN apt install -y libboost-all-dev
 
 RUN mkdir -p /usr/src
 
