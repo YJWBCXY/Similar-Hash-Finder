@@ -26,7 +26,7 @@ RUN git checkout 1.26.0
 WORKDIR /usr/src/mongo-c-driver/build
 RUN cmake -D ENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF ..
 RUN cmake --build .
-RUN cmake --install . --prefix "/usr/src/mongo-c-driver/install"
+RUN cmake --install . --prefix "/usr/local"
 
 WORKDIR /usr/src
 
@@ -35,7 +35,7 @@ RUN git clone https://github.com/mongodb/mongo-cxx-driver.git
 WORKDIR /usr/src/mongo-cxx-driver
 RUN git checkout r3.9.0
 WORKDIR /usr/src/mongo-cxx-driver/build
-RUN cmake -DCMAKE_PREFIX_PATH=/usr/src/mongo-c-driver/install -DCMAKE_INSTALL_PREFIX=/usr/src/mongo-cxx-driver/install ..
+RUN cmake -DCMAKE_PREFIX_PATH=/usr/local -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_CXX_STANDARD=17 ..
 RUN cmake --build .
 RUN cmake --install . 
 
@@ -43,14 +43,18 @@ WORKDIR /usr/src
 
 COPY ./ /usr/src/server
 
-RUN cmake -S /usr/src/server -B /usr/src/server/build
-RUN cmake --build /usr/src/server/build
+RUN cmake -S /usr/src/server -B /usr/src/server/build -DCMAKE_PREFIX_PATH=/usr/local/
+RUN cmake --build /usr/src/server/build 
 RUN cmake --install /usr/src/server/build --prefix "/usr/src/server/install"
 
 
 FROM base AS runtime
 
-COPY --from=builder /usr/src/mongo-cxx-driver/install /usr/local/
+RUN apt install -y libc6
+RUN apt install -y libssl3
+RUN apt install -y libsasl2-2
+
+COPY --from=builder /usr/local/ /usr/local/
 COPY --from=builder /usr/src/server/install /usr/src
 
 ENTRYPOINT [ "/usr/src/bin/SHF_server" ]

@@ -3,6 +3,8 @@ services:
   backend:
     container_name: shf-backend
     build: .
+    environment:
+      - LD_LIBRARY_PATH=/usr/local/lib/
     depends_on:
     - db
     networks:
@@ -14,9 +16,9 @@ services:
   db:
     container_name: shf-database
     image: mongodb/mongodb-community-server:7.0.4-ubuntu2204
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=admin123
+    # environment:
+    #   - MONGO_INITDB_ROOT_USERNAME=admin
+    #   - MONGO_INITDB_ROOT_PASSWORD=admin123
     networks:
       - shf-network
     volumes:

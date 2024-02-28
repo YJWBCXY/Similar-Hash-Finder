@@ -1,9 +1,21 @@
-#include <iostream>
+#include <cstdint>
+#include <vector>
+
+#include <mongocxx/client.hpp>
+#include <mongocxx/instance.hpp>
+#include <mongocxx/stdx.hpp>
+#include <mongocxx/uri.hpp>
+#include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/json.hpp>
 
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 
 #include "handlers.hpp"
+
+using bsoncxx::builder::basic::kvp;
+using bsoncxx::builder::basic::make_array;
+using bsoncxx::builder::basic::make_document;
 
 /*
     The base for this code comes from:
@@ -43,6 +55,19 @@ void runServer() {
 }
 
 int main() {
+
+    mongocxx::instance instance{}; // This should be done only once.
+    mongocxx::uri uri("mongodb://shf-database:27017");
+    mongocxx::client client(uri);
+    auto db = client["mydb"];
+    auto collection = db["test"];
+    auto insert_one_result = collection.insert_one(make_document(
+    kvp("name", "MongoDB"),
+    kvp("type", "database"),
+    kvp("count", 1),
+    kvp("versions", make_array("v6.0", "v5.0", "v4.4", "v4.2", "v4.0", "v3.6")),
+    kvp("info", make_document(kvp("x", 203), kvp("y", 102)))));
+
     try {
         runServer();
     } catch (const std::exception& e) {
