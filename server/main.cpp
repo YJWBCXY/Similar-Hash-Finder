@@ -44,7 +44,7 @@ void runServer() {
         // }else if (request.target()=="/tasks")
         //     response = handle_get_tasks(request);
         }else{
-            response = handle_test(request);
+            response = handle_404(request);
         }
         // Send the response to the client
             boost::beast::http::write(socket, response);

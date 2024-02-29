@@ -16,7 +16,7 @@ boost::beast::http::response<boost::beast::http::string_body> handle_test(boost:
     return response;
 }
 
-// TODO Finish when mongocxx is up and running
+// TODO: Finish when mongocxx is up and running
 // boost::beast::http::response<boost::beast::http::string_body> handle_get_tasks(boost::beast::http::request<boost::beast::http::string_body>& request) {
 
 //     boost::beast::http::response<boost::beast::http::string_body> response;
@@ -24,7 +24,7 @@ boost::beast::http::response<boost::beast::http::string_body> handle_test(boost:
 //     return response;
 // }
 
-boost::beast::http::response<boost::beast::http::string_body> ć(boost::beast::http::request<boost::beast::http::string_body>& request) {
+boost::beast::http::response<boost::beast::http::string_body> handle_404(boost::beast::http::request<boost::beast::http::string_body>& request) {
 
     boost::beast::http::response<boost::beast::http::string_body> response;
     response.result(boost::beast::http::status::not_found);
