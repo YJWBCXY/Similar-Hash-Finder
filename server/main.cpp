@@ -13,10 +13,6 @@
 
 #include "handlers.hpp"
 
-using bsoncxx::builder::basic::kvp;
-using bsoncxx::builder::basic::make_array;
-using bsoncxx::builder::basic::make_document;
-
 /*
     The base for this code comes from:
     https://medium.com/@sidhanthpandey/how-to-create-an-http-server-in-c-812cee49ff77
@@ -41,8 +37,8 @@ void runServer() {
         // Handle the request
         if (request.target()=="/test"){
             response = handle_test(request);
-        // }else if (request.target()=="/tasks")
-        //     response = handle_get_tasks(request);
+        }else if (request.target()=="/tasks") {
+            response = handle_get_tasks(request);
         }else{
             response = handle_404(request);
         }
@@ -55,18 +51,6 @@ void runServer() {
 }
 
 int main() {
-
-    mongocxx::instance instance{}; // This should be done only once.
-    mongocxx::uri uri("mongodb://shf-database:27017");
-    mongocxx::client client(uri);
-    auto db = client["mydb"];
-    auto collection = db["test"];
-    auto insert_one_result = collection.insert_one(make_document(
-    kvp("name", "MongoDB"),
-    kvp("type", "database"),
-    kvp("count", 1),
-    kvp("versions", make_array("v6.0", "v5.0", "v4.4", "v4.2", "v4.0", "v3.6")),
-    kvp("info", make_document(kvp("x", 203), kvp("y", 102)))));
 
     try {
         runServer();
