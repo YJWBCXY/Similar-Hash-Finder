@@ -18,7 +18,6 @@ boost::beast::http::response<boost::beast::http::string_body> handle_test(boost:
     return response;
 }
 
-// TODO: Finish when mongocxx is up and running
 boost::beast::http::response<boost::beast::http::string_body> handle_get_tasks(boost::beast::http::request<boost::beast::http::string_body>& request) {
 
     boost::beast::http::response<boost::beast::http::string_body> response;
@@ -29,8 +28,8 @@ boost::beast::http::response<boost::beast::http::string_body> handle_get_tasks(b
 
     try {
         database mydb;
-        mydb.insert_blank();
-        response.body() = "Succes";
+        response.body() = mydb.get_task();
+        // response.body() = "Succes";
     } catch (const char* e){
         std::cerr << "Exception: " << e << std::endl;
         response.body() = "Failure";

@@ -28,7 +28,7 @@ class database {
             db = client["shf_db"];
         }
 
-        int insert_blank(){
+        int insert_blank() {
             mongocxx::collection collection = db["hash"];
             mongocxx::options::find opts;
             opts.sort(make_document(kvp("index", -1)));
@@ -53,5 +53,31 @@ class database {
             collection.insert_many(insert);
 
             return 0;
+        }
+
+        std::string get_task() {
+            mongocxx::collection collection = db["hash"];
+            mongocxx::options::find opts;
+            opts.sort(make_document(kvp("index", 1)));
+            opts.limit(100);
+            mongocxx::cursor cursor = collection.find({}, opts);
+
+            //TODO: Add check if cursor get the number of record specified in limit 
+
+            bsoncxx::builder::basic::array task_list;
+
+            for (auto&& doc : cursor){
+                auto index = doc["index"];
+
+                if ( index && index.type() == bsoncxx::type::k_int64){
+                    int64_t tmp = index.get_int64();
+                    task_list.append(tmp);
+                }
+            }
+
+            bsoncxx::builder::basic::document doc_builder;
+            doc_builder.append(kvp("data", task_list));
+
+            return bsoncxx::to_json(doc_builder.view());
         }
 };
