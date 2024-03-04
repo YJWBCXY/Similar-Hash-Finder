@@ -4,5 +4,6 @@
     ],
     "cmake.configureSettings": {
         "CMAKE_INSTALL_PREFIX":"${workspaceFolder}/install"
-    }
+    },
+    "editor.formatOnSave": true
 }

@@ -1,12 +1,12 @@
 #include <cstdint>
 #include <vector>
 
+#include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/json.hpp>
 #include <mongocxx/client.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/stdx.hpp>
 #include <mongocxx/uri.hpp>
-#include <bsoncxx/builder/basic/document.hpp>
-#include <bsoncxx/json.hpp>
 
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
@@ -21,7 +21,8 @@
 
 void runServer() {
     boost::asio::io_context io_context;
-    boost::asio::ip::tcp::acceptor acceptor(io_context, {boost::asio::ip::tcp::v4(), 8080});
+    boost::asio::ip::tcp::acceptor acceptor(io_context,
+                                            {boost::asio::ip::tcp::v4(), 8080});
 
     while (true) {
         boost::asio::ip::tcp::socket socket(io_context);
@@ -35,15 +36,15 @@ void runServer() {
         boost::beast::http::response<boost::beast::http::string_body> response;
 
         // Handle the request
-        if (request.target()=="/test"){
+        if (request.target() == "/test") {
             response = handle_test(request);
-        }else if (request.target()=="/tasks") {
+        } else if (request.target() == "/tasks") {
             response = handle_get_tasks(request);
-        }else{
+        } else {
             response = handle_404(request);
         }
         // Send the response to the client
-            boost::beast::http::write(socket, response);
+        boost::beast::http::write(socket, response);
 
         // Close the socket
         socket.shutdown(boost::asio::ip::tcp::socket::shutdown_send);
@@ -51,7 +52,6 @@ void runServer() {
 }
 
 int main() {
-
     try {
         runServer();
     } catch (const std::exception& e) {
