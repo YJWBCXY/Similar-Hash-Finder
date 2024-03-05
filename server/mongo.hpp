@@ -23,13 +23,14 @@ mongocxx::client client(uri);
 class database {
     private:
     mongocxx::database db;
+    int64_t TASK_LIMIT = 100;
 
     public:
     database() {
         db = client["shf_db"];
     }
 
-    int insert_blank() {
+    int insert_blank(int64_t amount = 10000) {
         mongocxx::collection collection = db["hash"];
         mongocxx::options::find opts;
         opts.sort(make_document(kvp("index", -1)));
@@ -44,7 +45,7 @@ class database {
         }
 
         std::vector<bsoncxx::document::value> insert;
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < amount; i++) {
             insert.push_back(
                 make_document(kvp("index", index), kvp("state", 0)));
             index++;
@@ -57,15 +58,25 @@ class database {
 
     std::string get_task() {
         mongocxx::collection collection = db["hash"];
+
+        while (true) {
+            int64_t count = collection.count_documents(
+                make_document(kvp("state", 0)).view());
+            if (count < TASK_LIMIT) {
+                insert_blank();
+            } else {
+                break;
+            }
+        }
+
         mongocxx::options::find opts;
         opts.sort(make_document(kvp("index", 1)));
-        opts.limit(100);
-        mongocxx::cursor cursor = collection.find({}, opts);
-
-        // TODO: Add check if cursor get the number of record specified in limit
-
+        opts.limit(TASK_LIMIT);
+        mongocxx::cursor cursor =
+            collection.find(make_document(kvp("state", 0)), opts);
         bsoncxx::builder::basic::array task_list;
 
+        // TODO: Mark taken record as "in progress"
         for (auto&& doc : cursor) {
             auto index = doc["index"];
 
