@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <optional>
 #include <string>
 #include <vector>
@@ -76,15 +77,30 @@ class database {
             collection.find(make_document(kvp("state", 0)), opts);
         bsoncxx::builder::basic::array task_list;
 
-        // TODO: Mark taken record as "in progress"
+        auto bulk = collection.create_bulk_write();
+        int64_t time_now =
+            std::chrono::duration_cast<std::chrono::seconds>(
+                std::chrono::system_clock::now().time_since_epoch())
+                .count();
         for (auto&& doc : cursor) {
             auto index = doc["index"];
 
             if (index && index.type() == bsoncxx::type::k_int64) {
                 int64_t tmp = index.get_int64();
                 task_list.append(tmp);
+
+                bulk.append(mongocxx::model::update_one(
+                    make_document(kvp("index", tmp)).view(),
+                    make_document(kvp("$set", make_document(kvp("state", 1))))
+                        .view()));
+                bulk.append(mongocxx::model::update_one(
+                    make_document(kvp("index", tmp)).view(),
+                    make_document(
+                        kvp("$set", make_document(kvp("time", time_now))))
+                        .view()));
             }
         }
+        bulk.execute();
 
         bsoncxx::builder::basic::document doc_builder;
         doc_builder.append(kvp("data", task_list));
