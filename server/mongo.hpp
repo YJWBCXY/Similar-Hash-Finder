@@ -79,7 +79,7 @@ class database {
 
         auto bulk = collection.create_bulk_write();
         int64_t time_now =
-            std::chrono::duration_cast<std::chrono::seconds>(
+            std::chrono::duration_cast<std::chrono::hours>(
                 std::chrono::system_clock::now().time_since_epoch())
                 .count();
         for (auto&& doc : cursor) {
