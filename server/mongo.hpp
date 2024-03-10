@@ -108,7 +108,7 @@ class database {
         return bsoncxx::to_json(doc_builder.view());
     }
 
-    char insert_result(std::string input) {
+    void insert_result(std::string input) {
         bsoncxx::document::value json = bsoncxx::from_json(input);
         mongocxx::collection collection = db["contributors"];
         auto user = json["user"];
