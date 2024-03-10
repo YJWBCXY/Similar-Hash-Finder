@@ -38,8 +38,12 @@ void runServer() {
         // Handle the request
         if (request.target() == "/test") {
             response = handle_test(request);
-        } else if (request.target() == "/tasks") {
+        } else if (request.target() == "/tasks" &&
+                   request.method_string().to_string() == "GET") {
             response = handle_get_tasks(request);
+        } else if (request.target() == "/deposit" &&
+                   request.method_string().to_string() == "POST") {
+            response = handle_post_deposit(request);
         } else {
             response = handle_404(request);
         }

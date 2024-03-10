@@ -107,4 +107,39 @@ class database {
 
         return bsoncxx::to_json(doc_builder.view());
     }
+
+    char insert_result(std::string input) {
+        bsoncxx::document::value json = bsoncxx::from_json(input);
+        mongocxx::collection collection = db["contributors"];
+        auto user = json["user"];
+
+        int contributor_id;
+        if (user) {
+            bsoncxx::types::b_string contributor_name = user.get_string();
+            std::optional<bsoncxx::document::value> contributor =
+                collection.find_one(
+                    make_document(kvp("name", contributor_name)));
+            if (contributor) {
+                contributor_id = contributor.value().view()["id"].get_int32();
+            } else {
+                mongocxx::options::find opts;
+                opts.sort(make_document(kvp("id", -1)));
+                std::optional<bsoncxx::document::value> contributor =
+                    collection.find_one({}, opts);
+                if (contributor) {
+                    contributor_id =
+                        contributor.value().view()["id"].get_int32();
+                    contributor_id++;
+                } else {
+                    contributor_id = 0;
+                }
+                collection.insert_one(
+                    make_document(kvp("name", contributor_name),
+                                  kvp("id", contributor_id)));
+            }
+        }
+        // collection = db["hash"];
+        // auto data = json["data"];
+        // auto bulk = collection.create_bulk_write();
+    }
 };
