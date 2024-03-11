@@ -64,6 +64,7 @@ boost::beast::http::response<boost::beast::http::string_body>
 
     try {
         std::string body = request.body();
+        database().insert_result(body);
         response.body() = "Success hpd";
     } catch (const char* e) {
         std::cerr << "Exception: " << e << std::endl;

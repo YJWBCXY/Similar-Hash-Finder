@@ -138,8 +138,33 @@ class database {
                                   kvp("id", contributor_id)));
             }
         }
-        // collection = db["hash"];
-        // auto data = json["data"];
-        // auto bulk = collection.create_bulk_write();
+
+        collection = db["hash"];
+        bsoncxx::document::view data = json["data"].get_document().view();
+        mongocxx::bulk_write bulk = collection.create_bulk_write();
+        for (bsoncxx::document::element item : data) {
+            int64_t index = std::stoll(std::string(item.key()));
+            bsoncxx::types::b_string hash = item.get_string();
+
+            bulk.append(mongocxx::model::update_one(
+                make_document(kvp("index", index)).view(),
+                make_document(kvp("$set", make_document(kvp("hash", hash))))
+                    .view()));
+            bulk.append(mongocxx::model::update_one(
+                make_document(kvp("index", index)).view(),
+                make_document(
+                    kvp("$set",
+                        make_document(kvp("contributor_id", contributor_id))))
+                    .view()));
+            bulk.append(mongocxx::model::update_one(
+                make_document(kvp("index", index)).view(),
+                make_document(kvp("$set", make_document(kvp("state", 2))))
+                    .view()));
+            bulk.append(mongocxx::model::update_one(
+                make_document(kvp("index", index)).view(),
+                make_document(kvp("$unset", make_document(kvp("time", 1))))
+                    .view()));
+        }
+        bulk.execute();
     }
 };
