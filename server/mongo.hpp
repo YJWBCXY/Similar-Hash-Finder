@@ -77,12 +77,12 @@ class database {
             collection.find(make_document(kvp("state", 0)), opts);
         bsoncxx::builder::basic::array task_list;
 
-        auto bulk = collection.create_bulk_write();
+        mongocxx::bulk_write bulk = collection.create_bulk_write();
         int64_t time_now =
             std::chrono::duration_cast<std::chrono::hours>(
                 std::chrono::system_clock::now().time_since_epoch())
                 .count();
-        for (auto&& doc : cursor) {
+        for (bsoncxx::document::view doc : cursor) {
             auto index = doc["index"];
 
             if (index && index.type() == bsoncxx::type::k_int64) {
@@ -111,7 +111,7 @@ class database {
     void insert_result(std::string input) {
         bsoncxx::document::value json = bsoncxx::from_json(input);
         mongocxx::collection collection = db["contributors"];
-        auto user = json["user"];
+        bsoncxx::document::element user = json["user"];
 
         int contributor_id;
         if (user) {
