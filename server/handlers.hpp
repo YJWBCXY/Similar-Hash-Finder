@@ -22,7 +22,13 @@ boost::beast::http::response<boost::beast::http::string_body> handle_test(
     boost::beast::http::request<boost::beast::http::string_body>& request) {
     boost::beast::http::response<boost::beast::http::string_body> response;
     response = response_fill(request);
-    response.body() = "Hello, World!";
+    try {
+        database().unreserve();
+        response.body() = "Hello, World!";
+    } catch (const char* e) {
+        std::cerr << "Exception: " << e << std::endl;
+        response.body() = "Failure";
+    }
     // response.body() = request.method_string().to_string();
     response.prepare_payload();
 

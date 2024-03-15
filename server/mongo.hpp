@@ -167,4 +167,23 @@ class database {
         }
         bulk.execute();
     }
+
+    void unreserve() {
+        mongocxx::collection collection = db["hash"];
+        bsoncxx::document::view_or_value filter = make_document(
+            kvp("state", 1),
+            kvp("time",
+                make_document(
+                    kvp("$lt",
+                        std::chrono::duration_cast<std::chrono::hours>(
+                            std::chrono::system_clock::now().time_since_epoch())
+                                .count() -
+                            4))));
+        int64_t count = collection.count_documents(filter);
+        if (count > 0) {
+            collection.update_many(
+                filter,
+                make_document(kvp("$set", make_document(kvp("state", 0)))));
+        }
+    }
 };
