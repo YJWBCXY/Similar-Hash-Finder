@@ -12,6 +12,7 @@
 #include <boost/beast.hpp>
 
 #include "handlers.hpp"
+#include "mongo.hpp"
 
 /*
     The base for this code comes from:
@@ -23,6 +24,7 @@ void runServer() {
     boost::asio::io_context io_context;
     boost::asio::ip::tcp::acceptor acceptor(io_context,
                                             {boost::asio::ip::tcp::v4(), 8080});
+    int64_t time = 0;
 
     while (true) {
         boost::asio::ip::tcp::socket socket(io_context);
@@ -52,6 +54,17 @@ void runServer() {
 
         // Close the socket
         socket.shutdown(boost::asio::ip::tcp::socket::shutdown_send);
+
+        // * */6 * * * Cancel the reservation of an unfinished tasks.
+        if (time < std::chrono::duration_cast<std::chrono::hours>(
+                       std::chrono::system_clock::now().time_since_epoch())
+                       .count()) {
+            database().unreserve();
+            time = std::chrono::duration_cast<std::chrono::hours>(
+                       std::chrono::system_clock::now().time_since_epoch())
+                       .count() +
+                   6;
+        }
     }
 }
 
