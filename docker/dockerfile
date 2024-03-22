@@ -1,0 +1,12 @@
+FROM debian:stable-20240211-slim
+
+RUN apt update
+RUN apt install -y qt6-base-dev
+RUN apt install -y g++
+RUN apt install -y cmake
+RUN apt install -y libboost-all-dev
+
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT [ "/entrypoint.sh" ]

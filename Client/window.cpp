@@ -58,13 +58,11 @@ void Window::slot_hash_test() {
     for (int i = 0; i < 1000; i++) {
         data.push_back(gen_random(128));
     }
-    std::chrono::steady_clock::time_point start =
-        std::chrono::high_resolution_clock::now();
+    std::chrono::time_point start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 1000; i++) {
         out.push_back(sha256_to_base91(data[i]));
     }
-    std::chrono::steady_clock::time_point stop =
-        std::chrono::high_resolution_clock::now();
+    std::chrono::time_point stop = std::chrono::high_resolution_clock::now();
     std::chrono::milliseconds time =
         std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
     int dtime = 1000 / (time.count() / 1000);

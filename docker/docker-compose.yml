@@ -1,0 +1,6 @@
+services:
+  qt-builder:
+    container_name: qt-builder
+    build: .
+    volumes:
+      - ../:/usr/src
