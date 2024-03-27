@@ -1,10 +1,57 @@
-FROM debian:stable-20240211-slim
+FROM --platform=linux/amd64 debian:stable-20240211
 
 RUN apt update
-RUN apt install -y qt6-base-dev
+
+RUN apt install -y autoconf
+RUN apt install -y automake
+RUN apt install -y autopoint
+RUN apt install -y bash
+RUN apt install -y bison
+RUN apt install -y bzip2
+RUN apt install -y flex
 RUN apt install -y g++
+RUN apt install -y g++-multilib
+RUN apt install -y gettext
+RUN apt install -y git
+RUN apt install -y gperf
+RUN apt install -y intltool
+RUN apt install -y libc6-dev-i386
+RUN apt install -y libgdk-pixbuf2.0-dev
+RUN apt install -y libltdl-dev
+RUN apt install -y libgl-dev
+RUN apt install -y libpcre3-dev
+RUN apt install -y libssl-dev
+RUN apt install -y libtool-bin
+RUN apt install -y libxml-parser-perl
+RUN apt install -y lzip
+RUN apt install -y make
+RUN apt install -y openssl
+RUN apt install -y p7zip-full
+RUN apt install -y patch
+RUN apt install -y perl
+RUN apt install -y python3
+RUN apt install -y python3-distutils
+RUN apt install -y python3-mako
+RUN apt install -y python3-pkg-resources
+RUN apt install -y python-is-python3
+RUN apt install -y ruby
+RUN apt install -y sed
+RUN apt install -y unzip
+RUN apt install -y wget
+RUN apt install -y xz-utils
+
+RUN apt install -y qt6-base-dev
 RUN apt install -y cmake
 RUN apt install -y libboost-all-dev
+
+RUN apt install -y software-properties-common
+RUN apt install -y lsb-release
+
+RUN mkdir -p /opt/
+WORKDIR /opt/
+RUN git clone https://github.com/mxe/mxe.git
+WORKDIR /opt/mxe
+RUN make
 
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
