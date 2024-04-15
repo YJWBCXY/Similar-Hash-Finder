@@ -1,4 +1,5 @@
 #include <QHBoxLayout>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QString>
 #include <QTextEdit>
@@ -21,20 +22,22 @@ Window::Window(QWidget* parent) : QWidget(parent) {
 
     butt_hash = new QPushButton("hash", this);
     butt_hash_test = new QPushButton("hash_test", this);
+    butt_get_task = new QPushButton("get task", this);
 
-    btext_input = new QTextEdit(this);
-    btext_input->setPlaceholderText("Input");
+    ltext_name = new QLineEdit(this);
+    ltext_name->setPlaceholderText("Input");
     btext_output = new QTextEdit(this);
     btext_output->setReadOnly(true);
-    btext_output->setPlaceholderText("Input");
+    btext_output->setPlaceholderText("Output");
 
 
-    vbox_main->addWidget(btext_input);
+    vbox_main->addWidget(ltext_name);
     vbox_main->addLayout(hbox_buttons);
     vbox_main->addWidget(btext_output);
 
     hbox_buttons->addWidget(butt_hash);
     hbox_buttons->addWidget(butt_hash_test);
+    hbox_buttons->addWidget(butt_get_task);
 
 
     connect(butt_hash, SIGNAL(clicked()), this, SLOT(slot_hash()));
@@ -45,7 +48,7 @@ void Window::slot_hash() {
     QString data;
     std::string text;
 
-    data = btext_input->toPlainText();
+    data = ltext_name->text();
     text = data.toStdString();
     text = sha256_to_base91(text);
     data = QString::fromStdString(text);
@@ -68,3 +71,5 @@ void Window::slot_hash_test() {
     int dtime = 1000 / (time.count() / 1000);
     btext_output->setPlainText(QString::fromStdString(std::to_string(dtime)));
 }
+
+void Window::slot_get_task() {}

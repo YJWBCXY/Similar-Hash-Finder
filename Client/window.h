@@ -3,10 +3,11 @@
 
 #pragma once
 #include <QWidget>
-class QVBoxLayout;
 class QHBoxLayout;
+class QLineEdit;
 class QPushButton;
 class QTextEdit;
+class QVBoxLayout;
 class Window : public QWidget {
     Q_OBJECT
     public:
@@ -15,12 +16,14 @@ class Window : public QWidget {
     private slots:
     void slot_hash();
     void slot_hash_test();
+    void slot_get_task();
 
     private:
-    QVBoxLayout* vbox_main;
     QHBoxLayout* hbox_buttons;
-    QPushButton *butt_hash, *butt_hash_test;
+    QLineEdit* ltext_name;
+    QPushButton *butt_hash, *butt_hash_test, *butt_get_task;
     QTextEdit *btext_input, *btext_output;
+    QVBoxLayout* vbox_main;
 };
 
 #endif // WINDOW_H
