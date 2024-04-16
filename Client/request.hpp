@@ -7,5 +7,5 @@ class Request_handler {
     public:
     Request_handler(std::string url, std::string port = "8080");
 
-    void get_task();
+    std::string get_task();
 };

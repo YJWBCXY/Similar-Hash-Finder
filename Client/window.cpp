@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include "request.hpp"
 #include "sha256.h"
 #include "tools.h"
 #include "window.h"
@@ -42,6 +43,7 @@ Window::Window(QWidget* parent) : QWidget(parent) {
 
     connect(butt_hash, SIGNAL(clicked()), this, SLOT(slot_hash()));
     connect(butt_hash_test, SIGNAL(clicked()), this, SLOT(slot_hash_test()));
+    connect(butt_get_task, SIGNAL(clicked()), this, SLOT(slot_get_task()));
 }
 
 void Window::slot_hash() {
@@ -72,4 +74,11 @@ void Window::slot_hash_test() {
     btext_output->setPlainText(QString::fromStdString(std::to_string(dtime)));
 }
 
-void Window::slot_get_task() {}
+void Window::slot_get_task() {
+    QString data;
+    std::string text;
+
+    text = Request_handler("127.0.0.1", "8080").get_task();
+    data = QString::fromStdString(text);
+    btext_output->setPlainText(data);
+}
