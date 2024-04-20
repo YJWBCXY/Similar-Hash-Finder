@@ -1,7 +1,10 @@
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 #include <string>
+#include <vector>
 
 #include "request.hpp"
 
@@ -10,7 +13,7 @@ Request_handler::Request_handler(std::string url, std::string port) {
     PORT = port;
 }
 
-std::string Request_handler::get_task() {
+std::vector<int64_t> Request_handler::get_task() {
     boost::asio::io_context io_context;
     boost::asio::ip::tcp::resolver resolver(io_context);
     auto const endpoints = resolver.resolve(URL, PORT);
@@ -34,6 +37,14 @@ std::string Request_handler::get_task() {
     std::string bodyString(boost::asio::buffers_begin(body.data()),
                            boost::asio::buffers_end(body.data()));
 
-    return bodyString;
-    // TODO: Unpack data to std::vector<int> or std::array<int>
+    boost::property_tree::ptree pt;
+    std::istringstream is(bodyString);
+    boost::property_tree::read_json(is, pt);
+
+    std::vector<int64_t> indexes;
+    for (const boost::property_tree::ptree::value_type& item :
+         pt.get_child("data")) {
+        indexes.push_back(item.second.get_value<int64_t>());
+    }
+    return indexes;
 }

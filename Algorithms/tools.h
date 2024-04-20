@@ -15,3 +15,20 @@ std::string gen_random(const int len) {
 
     return tmp_s;
 }
+
+std::string index_to_string(int64_t index) {
+    std::string out;
+    int char_number = '~' - '!';
+    while (true) {
+        if (index >= char_number) {
+            char tmp = index % char_number;
+            tmp = tmp + '!';
+            index = index / char_number;
+            out = tmp + out;
+        } else {
+            char tmp = index + '!';
+            out = tmp + out;
+            return out;
+        }
+    }
+}

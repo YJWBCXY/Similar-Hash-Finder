@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include "base.hpp"
 #include "request.hpp"
 #include "sha256.h"
 #include "tools.h"
@@ -52,7 +53,8 @@ void Window::slot_hash() {
 
     data = ltext_name->text();
     text = data.toStdString();
-    text = sha256_to_base91(text);
+    // text = sha256_to_base91(text);
+    text = index_to_string(std::stol(text));
     data = QString::fromStdString(text);
 
     btext_output->setPlainText(data);
@@ -75,10 +77,17 @@ void Window::slot_hash_test() {
 }
 
 void Window::slot_get_task() {
-    QString data;
+    QString Qtext;
     std::string text;
+    std::vector<int64_t> data;
+    std::vector<std::string> hash;
 
-    text = Request_handler("127.0.0.1", "8080").get_task();
-    data = QString::fromStdString(text);
-    btext_output->setPlainText(data);
+    data = Request_handler("127.0.0.1", "8080").get_task();
+    for (int64_t index : data) {
+        // text += index_to_string(index);
+        text += sha256_to_base91(index_to_string(index));
+        text += "\n";
+    }
+    Qtext = QString::fromStdString(text);
+    btext_output->setPlainText(Qtext);
 }
